@@ -1,0 +1,219 @@
+import React, { useState } from 'react';
+import { Calculator, Users, Clock, TrendingUp, Brain, UserTie, BadgeYen, BarChart3, Settings } from 'lucide-react';
+
+export default function App() {
+  // State for input values
+  const [employeeCount, setEmployeeCount] = useState(40);
+  const [averageSalary, setAverageSalary] = useState(400000);
+  const [savedHours, setSavedHours] = useState(10);
+  const [monthlyCost, setMonthlyCost] = useState(400000);
+
+  // Calculations
+  const workingHoursPerMonth = 160;
+  const hourlyWage = Math.round(averageSalary / workingHoursPerMonth);
+  const totalCreatedHours = employeeCount * savedHours;
+  const totalValue = totalCreatedHours * hourlyWage;
+  const netProfit = totalValue - monthlyCost;
+  const roi = Math.round((totalValue / monthlyCost) * 100);
+
+  // Format currency
+  const formatCurrency = (num) => {
+    return new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(num);
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50 p-8 font-sans text-slate-800">
+      <div className="max-w-6xl mx-auto">
+        
+        {/* Header */}
+        <header className="mb-8 border-b-4 border-[#005BAC] pb-4 flex items-center gap-4">
+          <Calculator className="w-10 h-10 text-[#001C71]" />
+          <div>
+            <h1 className="text-3xl font-bold text-[#001C71]">AI導入 投資対効果（ROI）シミュレーター</h1>
+            <p className="text-slate-500 mt-1 font-medium">「高付加価値業務への創出時間」に基づく実質利益の可視化</p>
+          </div>
+        </header>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
+          
+          {/* Left Column: Controls */}
+          <div className="lg:col-span-4 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div className="flex items-center gap-2 mb-6 border-b pb-2 border-slate-100">
+              <Settings className="w-5 h-5 text-[#005BAC]" />
+              <h2 className="text-xl font-bold text-[#001C71]">シミュレーション条件</h2>
+            </div>
+
+            {/* Input Group 1: Organization */}
+            <div className="mb-8">
+              <h3 className="text-sm font-bold text-slate-500 mb-4 flex items-center gap-2">
+                <Users className="w-4 h-4" /> 組織・給与設定
+              </h3>
+              
+              <div className="mb-5">
+                <div className="flex justify-between mb-1">
+                  <label className="text-sm font-medium">対象従業員数</label>
+                  <span className="font-bold text-[#001C71]">{employeeCount} 名</span>
+                </div>
+                <input 
+                  type="range" min="1" max="100" value={employeeCount} 
+                  onChange={(e) => setEmployeeCount(Number(e.target.value))}
+                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#005BAC]"
+                />
+              </div>
+
+              <div>
+                <div className="flex justify-between mb-1">
+                  <label className="text-sm font-medium">平均月収 (目安)</label>
+                  <span className="font-bold text-[#001C71]">{formatCurrency(averageSalary)}</span>
+                </div>
+                <input 
+                  type="range" min="200000" max="800000" step="10000" value={averageSalary} 
+                  onChange={(e) => setAverageSalary(Number(e.target.value))}
+                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#005BAC]"
+                />
+                <p className="text-xs text-slate-400 mt-1 text-right">※月間160時間労働として時間単価を算出</p>
+              </div>
+            </div>
+
+            {/* Input Group 2: AI Impact */}
+            <div>
+              <h3 className="text-sm font-bold text-slate-500 mb-4 flex items-center gap-2">
+                <TrendingUp className="w-4 h-4" /> AI活用インパクト
+              </h3>
+
+              <div className="mb-5 p-4 bg-blue-50 border border-blue-100 rounded-lg">
+                <div className="flex justify-between mb-2">
+                  <label className="text-sm font-bold text-[#005BAC]">高付加価値業務への創出時間<br/><span className="text-xs font-normal">(月間 / 1人あたり)</span></label>
+                  <span className="text-2xl font-bold text-[#005BAC]">{savedHours} 時間</span>
+                </div>
+                <input 
+                  type="range" min="1" max="40" value={savedHours} 
+                  onChange={(e) => setSavedHours(Number(e.target.value))}
+                  className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer accent-[#005BAC]"
+                />
+              </div>
+
+              <div>
+                <div className="flex justify-between mb-1">
+                  <label className="text-sm font-medium">AIツール・コンサル支援費 (月額)</label>
+                  <span className="font-bold text-rose-600">{formatCurrency(monthlyCost)}</span>
+                </div>
+                <input 
+                  type="range" min="100000" max="1000000" step="50000" value={monthlyCost} 
+                  onChange={(e) => setMonthlyCost(Number(e.target.value))}
+                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-rose-500"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Results */}
+          <div className="lg:col-span-8 flex flex-col gap-6">
+            
+            {/* Top Row: Mini Cards */}
+            <div className="grid grid-cols-2 gap-6">
+              <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-center">
+                <div className="flex items-center gap-2 text-slate-500 mb-2">
+                  <Clock className="w-5 h-5 text-emerald-600" />
+                  <span className="font-bold">月間の創出時間（全社合計）</span>
+                </div>
+                <div className="text-4xl font-bold text-emerald-600 flex items-baseline gap-2">
+                  {totalCreatedHours} <span className="text-xl font-medium">時間</span>
+                </div>
+                <p className="text-sm text-slate-500 mt-2">
+                  ＝ この時間が「本来やるべきコア業務」へ投資されます
+                </p>
+              </div>
+
+              <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-center">
+                <div className="flex items-center gap-2 text-slate-500 mb-2">
+                  <BarChart3 className="w-5 h-5 text-indigo-600" />
+                  <span className="font-bold">投資回収率（ROI）</span>
+                </div>
+                <div className="text-4xl font-bold text-indigo-600 flex items-baseline gap-2">
+                  {roi} <span className="text-xl font-medium">%</span>
+                </div>
+                <p className="text-sm text-slate-500 mt-2">
+                  ＝ 投資額に対して {Math.floor(roi/100)}.{roi%100} 倍の価値を生み出します
+                </p>
+              </div>
+            </div>
+
+            {/* Main Result Card */}
+            <div className={`rounded-xl shadow-md p-8 flex-grow flex flex-col justify-center border-2 transition-colors duration-300 ${netProfit >= 0 ? 'bg-[#001C71] border-[#001C71]' : 'bg-rose-50 border-rose-200'}`}>
+              <div className="flex items-center gap-3 mb-4">
+                <BadgeYen className={`w-8 h-8 ${netProfit >= 0 ? 'text-[#a5d8ff]' : 'text-rose-500'}`} />
+                <h3 className={`text-xl font-bold ${netProfit >= 0 ? 'text-[#a5d8ff]' : 'text-rose-700'}`}>
+                  AI導入による実質的な利益増（月間換算）
+                </h3>
+              </div>
+              
+              <div className="text-center my-6">
+                <span className={`text-6xl font-black tracking-tight ${netProfit >= 0 ? 'text-white' : 'text-rose-600'}`}>
+                  {netProfit > 0 ? '+' : ''}{formatCurrency(netProfit)}
+                </span>
+                <span className={`text-xl font-medium ml-3 ${netProfit >= 0 ? 'text-slate-300' : 'text-rose-500'}`}>
+                  / 月
+                </span>
+              </div>
+
+              <div className={`grid grid-cols-2 gap-4 mt-4 pt-6 border-t ${netProfit >= 0 ? 'border-white/20 text-slate-300' : 'border-rose-200 text-rose-700'}`}>
+                <div className="text-center">
+                  <p className="text-sm mb-1">創出された労働価値</p>
+                  <p className="text-xl font-bold">+{formatCurrency(totalValue)}</p>
+                </div>
+                <div className="text-center border-l border-current">
+                  <p className="text-sm mb-1">AI・支援投資額</p>
+                  <p className="text-xl font-bold">-{formatCurrency(monthlyCost)}</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        {/* Bottom Section: The True Value */}
+        <div className="bg-white rounded-xl shadow-sm border border-[#005BAC] overflow-hidden">
+          <div className="bg-[#005BAC] text-white p-4 text-center font-bold text-xl tracking-wider">
+            創出された「時間」がもたらす会社への真の価値
+          </div>
+          <div className="p-8">
+            <div className="flex flex-col md:flex-row gap-8 mb-8">
+              <div className="flex-1 bg-blue-50 border border-blue-200 rounded-xl p-6 text-center">
+                <Brain className="w-12 h-12 text-[#005BAC] mx-auto mb-4" />
+                <h4 className="text-lg font-bold text-[#001C71] mb-2">AIの役割：下ごしらえ</h4>
+                <p className="text-slate-600 text-sm">煩わしい情報の整理や、判断・決定のための<br/>材料作り（非構造化データの処理）を任せる</p>
+              </div>
+              <div className="flex items-center justify-center">
+                <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center">
+                  <span className="font-bold text-slate-400 text-xl">+</span>
+                </div>
+              </div>
+              <div className="flex-1 bg-orange-50 border border-orange-200 rounded-xl p-6 text-center">
+                <UserTie className="w-12 h-12 text-orange-500 mx-auto mb-4" />
+                <h4 className="text-lg font-bold text-[#d84315] mb-2">人間の役割：決断と専門性</h4>
+                <p className="text-slate-600 text-sm">人にしかできない専門業務や対面の信頼構築、<br/>最終的な意思決定に集中する</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="border-l-4 border-[#005BAC] pl-4">
+                <h5 className="font-bold text-[#001C71] mb-2">1. 利益を生む時間への転換</h5>
+                <p className="text-sm text-slate-600">AIが用意した材料を元に専門業務に集中することで、より付加価値の高いアウトプット（利益）を生み出します。</p>
+              </div>
+              <div className="border-l-4 border-[#005BAC] pl-4">
+                <h5 className="font-bold text-[#001C71] mb-2">2. クイックレスポンスの実現</h5>
+                <p className="text-sm text-slate-600">判断までの下準備が短縮されることで仕事のスピードと質が向上し、お客様への圧倒的なクイックレスポンスを体現します。</p>
+              </div>
+              <div className="border-l-4 border-[#005BAC] pl-4">
+                <h5 className="font-bold text-[#001C71] mb-2">3. 人材の定着・引き留め</h5>
+                <p className="text-sm text-slate-600">煩わしい作業から解放される最新の環境は、社員のストレス軽減に直結し、優秀な人材の定着につながります。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
